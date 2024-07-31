@@ -1,4 +1,4 @@
-import { View, StyleSheet, Press, Pressable } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import Constants from 'expo-constants';
 import Text from './Text';
 
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 'auto',
     alignSelf: 'auto',
-    height: 50,
+    height: 80,
   }
 
 });
@@ -25,11 +25,11 @@ const AppBar = () => {
   return ( 
   <View style={styles.container}>
     <View style={styles.flexBar} >
+    <Pressable onPress={onPressFunction}>
       <Text fontWeight="bold" fontSize="subheading" >
-        <Pressable onPress={onPressFunction}>
-        Repository
-        </Pressable>
+            Repositories       
         </Text>
+        </Pressable>
     </View>
   </View>
 
