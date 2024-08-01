@@ -1,20 +1,21 @@
+import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import Text from './Text';
 import { Link } from 'react-router-native';
-import theme from '../theme';
 
 const styles = StyleSheet.create({
   container: {
     paddingTop: Constants.statusBarHeight,
+    backgroundColor: '#4a90e2'
   },
   flexBar: {
     flexGrow: 1,
-    backgroundColor: 'lightblue',
     flexShrink: 1,
     flexDirection: 'row', 
     alignItems: 'center', 
     height: 80,
+    paddingHorizontal: 16,
   },
   tabContainer: {
     flexDirection: 'row',
@@ -22,45 +23,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   tab: {
-    paddingHorizontal: 10,
-    color: 'white',
+    paddingHorizontal: 12,
+    paddingVertical: 8,
   },
   signInTab: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    marginLeft: 'auto',
+  },
+  tabText: {
     color: 'white',
-    marginLeft: 195, 
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   scrollView: {
     flexDirection: "row"
   },
-
 });
-
-/*const onPressFunction = (event) => {
-  event.preventDefault()
-}*/
 
 const AppBar = () => {
   return ( 
-  <View style={styles.container}>
-    <ScrollView horizontal= {true} style={styles.scrollView}>
-    <View style={styles.flexBar} >
-    <View style={styles.tabContainer}>
-    <Link to='/' style={styles.tab}>
-      <Text fontWeight="bold" fontSize="heading" >
-            Repositories       
-        </Text>
-      </Link>
-      <Link to='/SignIn' style={styles.signInTab}>
-      <Text fontWeight="bold" fontSize="heading">Sign In</Text>
-      </Link>
-      </View>
+    <View style={styles.container}>
+      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+        <View style={styles.flexBar}>
+          <View style={styles.tabContainer}>
+            <Link to='/' style={styles.tab}>
+              <Text style={styles.tabText}>Repositories</Text>
+            </Link>
+            <Link to='/SignIn' style={styles.signInTab}>
+              <Text style={styles.tabText}>Sign In</Text>
+            </Link>
+          </View>
+        </View>
+      </ScrollView>
     </View>
-    </ScrollView>
-  </View>
-
-)
- 
+  );
 };
 
 export default AppBar;
