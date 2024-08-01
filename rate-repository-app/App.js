@@ -1,6 +1,7 @@
 import { View, StyleSheet } from "react-native";
 import Main from "./src/components/Main";
 import Constants from 'expo-constants';
+import { NativeRouter } from "react-router-native";
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +15,9 @@ const styles = StyleSheet.create({
 const App = () => {
   return (
     <View style={styles.container}>
+      <NativeRouter>
         <Main />
+        </NativeRouter>
     </View>
 
   )

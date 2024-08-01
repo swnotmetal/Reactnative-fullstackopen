@@ -1,20 +1,33 @@
-import Text from './Text';
+import {Route, Routes, Navigate, Link} from 'react-router-native'
 import { StyleSheet, View } from 'react-native';
 import RepositoryList from './RepositoryList';
 import AppBar from './AppBar';
+import SignIn from './SignIn';
+import Text from './Text';
+
 
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     flexShrink: 1,
   },
+  signInContainer: {
+    flexDirection: 'row-reverse'
+  }
+
 });
 
 const Main = () => {
   return (
     <View style={styles.container}>
-      <AppBar/>
-      <RepositoryList />
+      <AppBar />
+
+      <Routes>
+        <Route path='/' element={< RepositoryList/>}/>
+        <Route path='*' element={<Navigate to="/" replace />} />
+        <Route path='SignIn' element={<SignIn />}/>
+      </Routes>
+    
     </View>
   );
 };
