@@ -2,6 +2,7 @@ import React from 'react';
 import { useFormik } from 'formik';
 import { TextInput, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Text from './Text';
+import * as yup from 'yup';
 
 const styles = StyleSheet.create({
   container: {
@@ -13,9 +14,12 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     borderWidth: 1,
     borderRadius: 8,
-    marginBottom: 16,
+    marginBottom: 8,
     paddingHorizontal: 12,
     fontSize: 16,
+  },
+  inputError: {
+    borderColor: '#d73a4a',
   },
   button: {
     backgroundColor: '#4a90e2',
@@ -33,38 +37,80 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginBottom: 8,
+  },
 });
 
-const initialValues = {
-  username: '',
-  password: '',
-};
+const validationSchema = yup.object().shape({
+  username: yup
+    .string()
+    .min(5, 'Username must be longer than 5 characters')
+    .max(25, 'Username is too long!')
+    .required('Username is required'),
+  password: yup
+    .string()
+    .min(8, 'Password must be longer than 8 characters')
+    .max(30, 'Password is too long!')
+    .matches(
+      /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).+$/,
+      'Password must contain at least 1 capital character and 1 special character.'
+    )
+    .required('Password is required'),
+});
 
 const SignIn = ({ onSubmit }) => {
   const formik = useFormik({
-    initialValues,
-    onSubmit,
+    initialValues: {
+      username: '',
+      password: '',
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+      if (onSubmit) {
+        onSubmit(values);
+      }
+    },
   });
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Username</Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          //formik.errors.username && styles.inputError,
+        ]}
         placeholder="Enter your username"
         onChangeText={formik.handleChange('username')}
+        onBlur={formik.handleBlur('username')}
         value={formik.values.username}
         autoCapitalize="none"
       />
+      {formik.errors.username && (
+        <Text style={styles.errorText}>{formik.errors.username}</Text>
+      )}
+
       <Text style={styles.label}>Password</Text>
       <TextInput
-        style={styles.input}
+        style={[
+          styles.input,
+          //formik.errors.password && styles.inputError,
+        ]}
         placeholder="Enter your password"
         onChangeText={formik.handleChange('password')}
+        onBlur={formik.handleBlur('password')}
         value={formik.values.password}
         secureTextEntry={true}
         autoCapitalize="none"
       />
+      {formik.errors.password && (
+        <Text style={styles.errorText}>{formik.errors.password}</Text>
+      )}
+
       <TouchableOpacity style={styles.button} onPress={formik.handleSubmit}>
         <Text style={styles.buttonText}>Log In</Text>
       </TouchableOpacity>
