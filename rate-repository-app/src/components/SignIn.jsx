@@ -1,8 +1,10 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { TextInput, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { TextInput, View, StyleSheet, Button, Pressable } from 'react-native';
 import Text from './Text';
 import * as yup from 'yup';
+import useSignIn from '../hooks/useSignIn';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -52,23 +54,34 @@ const validationSchema = yup.object().shape({
     .required('Username is required'),
   password: yup
     .string()
-    .min(8, 'Password must be longer than 8 characters')
+    .min(6, 'Password must be longer than 8 characters')
     .max(30, 'Password is too long!')
-    .matches(
+    /*.matches(
       /^(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).+$/,
       'Password must contain at least 1 capital character and 1 special character.'
-    )
+    )*/
     .required('Password is required'),
 });
 
 const SignIn = ({ onSubmit }) => {
+  
+  const [signIn] = useSignIn();
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
     validationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
+      const { username, password } = values;
+      try {
+        const response = await signIn({ username, password });
+        console.log('repsonse:',response);
+        const accessToken = response.authenticate.accessToken;
+        console.log('Access Token:', accessToken);
+      }catch (e) {
+        console.log(e);
+      }
       console.log(values);
       if (onSubmit) {
         onSubmit(values);
@@ -111,9 +124,9 @@ const SignIn = ({ onSubmit }) => {
         <Text style={styles.errorText}>{formik.errors.password}</Text>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={formik.handleSubmit}>
-        <Text style={styles.buttonText}>Log In</Text>
-      </TouchableOpacity>
+      <Pressable style={styles.button} onPress={formik.handleSubmit} title="Sign In" > 
+      <Text style={styles.buttonText}>Log In</Text>
+      </Pressable>
     </View>
   );
 };
