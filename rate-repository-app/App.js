@@ -16,6 +16,8 @@ const styles = StyleSheet.create({
 })
 
 const App = () => {
+
+  console.log(Constants.expoConfig.extra.APOLLO_URI);
   return (
     <View style={styles.container}>
       <NativeRouter>
