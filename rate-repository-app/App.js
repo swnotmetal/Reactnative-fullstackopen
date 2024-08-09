@@ -2,6 +2,9 @@ import { View, StyleSheet } from "react-native";
 import Main from "./src/components/Main";
 import Constants from 'expo-constants';
 import { NativeRouter } from "react-router-native";
+import { ApolloProvider } from "@apollo/client";
+
+import createApolloClient from "./utils/apolloClient";
 
 const styles = StyleSheet.create({
   container: {
@@ -16,7 +19,9 @@ const App = () => {
   return (
     <View style={styles.container}>
       <NativeRouter>
+        <ApolloProvider client={createApolloClient()}>
         <Main />
+        </ApolloProvider>
         </NativeRouter>
     </View>
 
