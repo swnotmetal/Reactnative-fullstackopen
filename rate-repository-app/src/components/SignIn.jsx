@@ -1,10 +1,12 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { TextInput, View, StyleSheet, Button, Pressable } from 'react-native';
+import { TextInput, View, StyleSheet, Pressable } from 'react-native';
 import Text from './Text';
 import * as yup from 'yup';
-import useSignIn from '../hooks/useSignIn';
-
+import useSignIn from '../hooks/useSignIn.jsx';
+import { useNavigate } from 'react-router-native';
+import { useState } from 'react';
+import Notification from './Notification.jsx';
 
 const styles = StyleSheet.create({
   container: {
@@ -64,6 +66,9 @@ const validationSchema = yup.object().shape({
 });
 
 const SignIn = ({ onSubmit }) => {
+  const [notification, setNotification] = useState({message: '', type: ''});
+
+  const navigation = useNavigate();
   
   const [signIn] = useSignIn();
   const formik = useFormik({
@@ -73,16 +78,23 @@ const SignIn = ({ onSubmit }) => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      const { username, password } = values;
       try {
-        const response = await signIn({ username, password });
-        console.log('repsonse:',response);
-        const accessToken = response.authenticate.accessToken;
-        console.log('Access Token:', accessToken);
-      }catch (e) {
-        console.log(e);
+        const response = await signIn(values);
+       
+        console.log('Response in SignIn:', response);
+        if (response?.authenticate?.accessToken) {
+          setNotification({ message: 'Login successful!', type: 'success' });
+          setTimeout(() => {
+            navigation('/');
+          }, 1500)     
+        } else {
+          console.log("Sign in failed: No access token received");
+          setNotification({ message: 'Login failed. Please try again.', type: 'error' });
+        }
+      } catch (error) {
+        console.error("Error during sign in:", error);
+        setNotification({ message: 'Error occured while signing in.', type: 'error' });
       }
-      console.log(values);
       if (onSubmit) {
         onSubmit(values);
       }
@@ -91,6 +103,9 @@ const SignIn = ({ onSubmit }) => {
 
   return (
     <View style={styles.container}>
+       {notification.message && (
+        <Notification message={notification.message} type={notification.type} />
+      )}
       <Text style={styles.label}>Username</Text>
       <TextInput
         style={[
@@ -124,7 +139,7 @@ const SignIn = ({ onSubmit }) => {
         <Text style={styles.errorText}>{formik.errors.password}</Text>
       )}
 
-      <Pressable style={styles.button} onPress={formik.handleSubmit} title="Sign In" > 
+      <Pressable style={styles.button} onPress={(formik.handleSubmit)} title="Sign In" > 
       <Text style={styles.buttonText}>Log In</Text>
       </Pressable>
     </View>

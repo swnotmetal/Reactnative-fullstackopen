@@ -3,26 +3,33 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 class AuthStorage {
   constructor(namespace = 'auth') {
     this.namespace = namespace;
+    this.key = `${this.namespace}:accessToken`;
   }
 
   async getAccessToken() {
-      const userAuthen = await AsyncStorage.getItem(`${this.namespace}:userAuthentication`);
-      return userAuthen ? JSON.parse(userAuthen) : [];
+    try {
+      const accessToken = await AsyncStorage.getItem(this.key);
+      return accessToken ? accessToken : null;
+    } catch (error) {
+      console.error('Error getting access token:', error);
+      return null;
+    }
   }
 
   async setAccessToken(accessToken) {
-    // Add the access token to the storage
-    const currentAuthen = this.getAccessToken();
-    const newAuthen = [...currentAuthen, accessToken];
-
-    await AsyncStorage.setItem(
-        `${this.namespace}:userAuthentication`, JSON.stringify(newAuthen)
-    );
+    try {
+      await AsyncStorage.setItem(this.key, accessToken);
+    } catch (error) {
+      console.error('Error setting access token:', error);
+    }
   }
 
   async removeAccessToken() {
-    // Remove the access token from the storage
-    await AsyncStorage.removeItem(`${this.namespace}:userAuthentication`);
+    try {
+      await AsyncStorage.removeItem(this.key);
+    } catch (error) {
+      console.error('Error removing access token:', error);
+    }
   }
 }
 

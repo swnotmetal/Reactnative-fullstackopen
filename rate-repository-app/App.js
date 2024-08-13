@@ -3,7 +3,8 @@ import Main from "./src/components/Main";
 import Constants from 'expo-constants';
 import { NativeRouter } from "react-router-native";
 import { ApolloProvider } from "@apollo/client";
-
+import AuthStorage from "./utils/authStorage";
+import AuthStorageContext from "./src/contexts/AuthStorageContext";
 import createApolloClient from "./utils/apolloClient";
 
 const styles = StyleSheet.create({
@@ -15,14 +16,21 @@ const styles = StyleSheet.create({
   }
 })
 
+const authStorage = new AuthStorage();
+console.log('AuthStorage initialized:', authStorage)
+const apolloClient = createApolloClient(authStorage);
+console.log('Apollo Client initialized:', apolloClient);
+
 const App = () => {
 
   console.log(Constants.expoConfig.extra.APOLLO_URI);
   return (
     <View style={styles.container}>
       <NativeRouter>
-        <ApolloProvider client={createApolloClient()}>
+        <ApolloProvider client={apolloClient}>
+          <AuthStorageContext.Provider value={authStorage}>
         <Main />
+        </AuthStorageContext.Provider>
         </ApolloProvider>
         </NativeRouter>
     </View>

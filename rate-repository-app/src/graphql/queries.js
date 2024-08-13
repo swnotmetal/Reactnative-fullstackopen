@@ -14,3 +14,19 @@ export const GET_REPOSITORIES = gql`
   ${REPO_DETAILS}
 `
 
+export const ME = gql`
+  query {
+    me {
+      id
+      username
+    }
+  }
+`
+
+export const AUTHENTICATE = gql`
+  mutation Authenticate($credentials: AuthenticateInput!) {
+    authenticate(credentials: $credentials) {
+      accessToken
+    }
+  }
+`;
