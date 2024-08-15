@@ -64,7 +64,7 @@ const StatItem = ({ label, value }) => (
 );
 
 const RepositoryItem = ({ fullName, description, language, stars, forks, reviews, rating, avatar }) => (
-  <View style={styles.container}>
+  <View style={styles.container} testID="repositoryItem" >
     <View style={styles.headerContainer}>
       <View style={styles.avatarContainer}>
         <Image source={{ uri: avatar }} style={styles.avatar} />
