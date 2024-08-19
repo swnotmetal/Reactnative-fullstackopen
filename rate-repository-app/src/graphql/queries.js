@@ -30,3 +30,13 @@ export const AUTHENTICATE = gql`
     }
   }
 `;
+
+export const GET_SINGLE_REPO = gql` 
+  query Repository($id: ID!) {
+    repository(id: $id) {
+      ...RepoDetails
+      url
+    }
+  }
+  ${REPO_DETAILS}
+`;

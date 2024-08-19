@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, View, StyleSheet } from "react-native";
+import { Image, View, StyleSheet, Pressable } from "react-native";
 import Text from './Text';
 import theme from "../theme";
 
@@ -52,9 +52,11 @@ const styles = StyleSheet.create({
   },
 });
 
-const thousandIsK = (number) => {
-  return number > 1000 ? `${Math.round(number / 100) / 10}k` : number.toString();
+const thousandIsK = (value) => {
+  if (value == null) return "0"; 
+  return value >= 1000 ? (value / 1000).toFixed(1) + 'k' : value.toString();
 };
+
 
 const StatItem = ({ label, value }) => (
   <View style={styles.statsItem}>
@@ -64,6 +66,7 @@ const StatItem = ({ label, value }) => (
 );
 
 const RepositoryItem = ({ fullName, description, language, stars, forks, reviews, rating, avatar }) => (
+
   <View style={styles.container} testID="repositoryItem" >
     <View style={styles.headerContainer}>
       <View style={styles.avatarContainer}>
@@ -82,6 +85,7 @@ const RepositoryItem = ({ fullName, description, language, stars, forks, reviews
       <StatItem label="Rating" value={rating} />
     </View>
   </View>
+
 );
 
 export default RepositoryItem;

@@ -1,6 +1,7 @@
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, Pressable } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
+import { Link, useNavigate } from 'react-router-native';
 
 const styles = StyleSheet.create({
   separator: {
@@ -10,16 +11,19 @@ const styles = StyleSheet.create({
 
 
 
+
 export const RepositoryListContainer = ({ repositories }) => {
   const repoNodes = repositories
     ? repositories.edges.map((edge) => edge.node)
     : [];
-
+    
     return (
       <FlatList
         data={repoNodes}
         ItemSeparatorComponent={ItemSeparator}
         renderItem={({item}) => 
+          <Link to={`/repository/${item.id}`}>
+        
           <RepositoryItem 
               fullName={item.fullName}
               description={item.description}
@@ -29,7 +33,9 @@ export const RepositoryListContainer = ({ repositories }) => {
               reviews={item.reviewCount}
               rating={item.ratingAverage}
               avatar={item.ownerAvatarUrl}
-          />}
+          />
+          </Link>
+          }
       />
     );
 };
@@ -40,7 +46,10 @@ const RepositoryList = () => {
 
   const {repositories} = useRepositories();
 
-  return <RepositoryListContainer repositories={repositories} />;
+  return (
+  <RepositoryListContainer repositories={repositories} />
+  
+  );
 };
 
 

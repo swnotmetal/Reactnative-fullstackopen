@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-native';
 import useSignIn from '../hooks/useSignIn.jsx';
 import Notification from './Notification.jsx';
-import { SignInContainer } from './SignInContainer'; // Import the SignInContainer
+import { SignInContainer } from './SignInContainer'; 
 
 const SignIn = () => {
   const [notification, setNotification] = useState({ message: '', type: '' });
