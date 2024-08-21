@@ -9,22 +9,22 @@ import SignUp from './SignUp';
 
 
 
+
+
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     flexShrink: 1,
   },
-  signInContainer: {
-    flexDirection: 'row-reverse'
-  }
-
 });
 
 const Main = () => {
   return (
+    <>
+   
     <View style={styles.container}>
       <AppBar />
-
       <Routes>
         <Route path='/' element={< RepositoryList/>}/>
         <Route path='*' element={<Navigate to="/" replace />} />
@@ -33,8 +33,9 @@ const Main = () => {
         <Route path='/writeAReview' element={<ReviewForm/>}/>
         <Route path='/SignUp' element={<SignUp/>}/>
       </Routes>
+      </View>
+    </>
     
-    </View>
   );
 };
 
