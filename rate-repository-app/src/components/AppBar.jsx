@@ -29,7 +29,10 @@ const AppBar = () => {
                 </Link>
                 <Link to='/SignIn' style={sharedStyles.signInTab} onPress={signOut}>
                   <Text style={sharedStyles.tabText}>Sign out</Text>
-                </Link>        
+                </Link> 
+                <Link to='/MyReviews' style={sharedStyles.signInTab}>
+                  <Text style={sharedStyles.tabText}>My reviews</Text>
+                </Link>
               </>
             ) : (
               <>

@@ -6,6 +6,7 @@ import SignIn from './SignIn';
 import { SingleRepoPage } from './SingleRepoPage';
 import ReviewForm from './ReviewForm';
 import SignUp from './SignUp';
+import MyReviews from './MyReviews';
 
 
 
@@ -32,6 +33,7 @@ const Main = () => {
         <Route path='repository/:id' element={< SingleRepoPage />}/>
         <Route path='/writeAReview' element={<ReviewForm/>}/>
         <Route path='/SignUp' element={<SignUp/>}/>
+        <Route path='/MyReviews' element={<MyReviews/>}/>
       </Routes>
       </View>
     </>

@@ -1,3 +1,4 @@
+import React from 'react';
 import { FlatList, View, StyleSheet, } from 'react-native';
 import RepositoryItem from './RepositoryItem';
 import useRepositories from '../hooks/useRepositories';
@@ -5,6 +6,7 @@ import { Link, } from 'react-router-native';
 import { Picker } from '@react-native-picker/picker';
 import theme from '../theme';
 import { useState } from 'react';
+import SearchBar from './SearchBar';
 
 const styles = StyleSheet.create({
   separator: {
@@ -23,7 +25,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     color: 'black',
-    borderRadius: 3,
+    borderRadius: 5,
     borderWidth: 1,
     fontSize: theme.fontSizes.body,
     color: theme.colors.textSecondary,
@@ -31,11 +33,46 @@ const styles = StyleSheet.create({
   }
 });
 
-export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
-  const repoNodes = repositories
-    ? repositories.edges.map((edge) => edge.node)
-    : [];
+export class RepositoryListContainer extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      order: props.order || 'latest',
+    };
+  }
+
+    handleOrderChange = (itemValue) => {
+    this.setState({ order: itemValue });
+    this.props.setOrder(itemValue);
+  }
+
+  renderHeader = () => {
+    const { order } = this.state;
+    return (
+      <View style={styles.pickerContainer}>
+          <SearchBar setSearchKeyWord={this.props.setSearchKeyWord} />
+        <Picker
+          style={styles.picker}
+          selectedValue={order}
+          onValueChange={this.handleOrderChange}
+        >
+          <Picker.Item label="Latest repositories" value="latest" />
+          <Picker.Item label="Highest rated repositories" value="highest" />
+          <Picker.Item label="Lowest rated repositories" value="lowest" />
+        </Picker>
+      
+      </View>
+    );
+  }
+
+   
     
+    render() {
+      const {repositories} = this.props;
+      const repoNodes = repositories
+      ? repositories.edges.map((edge) => edge.node)
+      : [];
     return (
       <FlatList
         data={repoNodes}
@@ -56,38 +93,27 @@ export const RepositoryListContainer = ({ repositories, order, setOrder }) => {
           </Link>
           }
 
-          ListHeaderComponent={() => (
-            <View style={styles.pickerContainer}>
-              <Picker
-                style={styles.picker}
-                selectedValue={order}
-                onValueChange={(itemValue) => setOrder(itemValue)}
-              > 
-                <Picker.Item label="Select an item" value="select" />
-                <Picker.Item label="Latest repositories" value="latest" />
-                <Picker.Item label="Highest rated repositories" value="highest" />
-                <Picker.Item label="Lowest rated repositories" value="lowest" />
-              </Picker>
-            </View>
-          )}
+          ListHeaderComponent={this.renderHeader}
       />
     );
 };
+}
 
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const RepositoryList = () => {
 
   const [order, setOrder] = useState('latest');
+  const [keyWord, setSearchKeyWord] = useState('');
 
   let orderBy
   let orderDirection
 
   switch (order) {
-    case 'select':
+    /*case 'select':
       orderBy = '';
       orderDirection = '';
-      break;
+      break;*/  // removed for the backend does not support this option
     case 'latest':
       orderBy = 'CREATED_AT';
       orderDirection = 'DESC';
@@ -103,12 +129,13 @@ const RepositoryList = () => {
 
   }
 
-  const {repositories} = useRepositories(orderBy, orderDirection);
+
+  const {repositories} = useRepositories(orderBy, orderDirection, keyWord);
 
   return (
     <>
    
-  <RepositoryListContainer repositories={repositories} order={order} setOrder={setOrder}/>
+  <RepositoryListContainer repositories={repositories} order={order} setOrder={setOrder} keyWord={keyWord} setSearchKeyWord={setSearchKeyWord}/>
   </>
   );
 };
