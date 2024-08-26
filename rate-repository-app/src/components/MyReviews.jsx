@@ -1,6 +1,8 @@
 import React from 'react';
-import { FlatList, View, StyleSheet, Text } from 'react-native';
+import { FlatList, View, StyleSheet, Text, Pressable, Alert } from 'react-native';
 import useMyReview from '../hooks/useMyReview';
+import useDeleteReview from '../hooks/useDeleteReview';
+import { useNavigate } from 'react-router-native';
 
 const styles = StyleSheet.create({
     container: {
@@ -9,6 +11,13 @@ const styles = StyleSheet.create({
     },
     button: {
       backgroundColor: '#0366d6',
+      padding: 15,
+      borderRadius: 5,
+      alignItems: 'center',
+      margin: 10,
+    },
+    deleteButton: {
+      backgroundColor: '#C7253E',
       padding: 15,
       borderRadius: 5,
       alignItems: 'center',
@@ -71,7 +80,60 @@ const styles = StyleSheet.create({
 
 
 
-const ReviewItem = ({ review }) => {
+const ReviewItem = ({ review, refetch }) => {
+  const [deleteReview] = useDeleteReview();
+  const navigate = useNavigate();
+
+
+  const handleDelete = async () => {
+    Alert.alert(
+      "Delete Review",
+      "Are you sure you want to delete this review?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Delete cancelled"),
+          style: "cancel"
+        },
+        {
+          text: "OK",
+          onPress: async () => {
+            console.log("Delete button pressed for review id:", review.id);
+            try {
+              const result = await deleteReview(review.id);
+              console.log("Delete result:", result);
+              if (result && result.deleteReview) {
+                console.log("Review deleted successfully");
+                await refetch();
+              } else {
+                console.log("Delete operation didn't return expected result:", result);
+              }
+            } catch (e) {
+              console.error("Error deleting review:", e);
+            }
+          }
+        }
+      ],
+      { cancelable: false }
+    );
+  }; // with andorid emulator fails me on "ERROR  TypeError: Cannot read property 'NativeModule' of undefined, js engine: hermes", I had to assume that this works since the similiar codes work with the web version of the app.
+ 
+
+  /*  const handleDelete = async () => {
+    console.log("Delete button pressed for review id:", review.id);
+    try {
+      const result = await deleteReview(review.id);
+      console.log("Delete result:", result);
+      if (result && result.deleteReview) {
+        console.log("Review deleted successfully");
+        await refetch();
+      } else {
+        console.log("Delete operation didn't return expected result:", result);
+      }
+    } catch (e) {
+      console.error("Error deleting review:", e);
+    }
+  };*/ //the above code is the original code for the handleDelete function, it is left here because I could not get the andorid emulator to work at all, and this works with the web version of the app.
     return (
       <View style={styles.reviewItem}>
         <View style={styles.reviewHeader}>
@@ -84,13 +146,19 @@ const ReviewItem = ({ review }) => {
           </View>
         </View>
         <Text style={styles.reviewText}>{review.text}</Text>
+        <Pressable style={styles.button} onPress={() => {navigate(`/repository/${review.repositoryId}`)}}>
+          <Text style={styles.buttonText}>View Repository</Text>
+        </Pressable>
+        <Pressable style={styles.deleteButton} onPress={handleDelete}>
+          <Text style={styles.buttonText}>Delete Review</Text>
+        </Pressable>
       </View>
     );
   };
 const ItemSeparator = () => <View style={styles.separator} />;
 
 const MyReviews = () => {
-    const { reviews, loading, error } = useMyReview();
+    const { reviews, loading, error, refetch } = useMyReview();
     console.log(reviews, "reviews in my reviews component");
 
     if (loading) {
@@ -112,7 +180,7 @@ const MyReviews = () => {
             {reviewNodes.length > 0 ? (
                 <FlatList
                     data={reviewNodes}
-                    renderItem={({ item }) => <ReviewItem review={item} />}
+                    renderItem={({ item }) => <ReviewItem review={item} refetch={refetch} />}
                     ItemSeparatorComponent={ItemSeparator}
                     keyExtractor={(item, index) => index.toString()}
                 />
