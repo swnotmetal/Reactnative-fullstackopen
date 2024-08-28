@@ -116,24 +116,8 @@ const ReviewItem = ({ review, refetch }) => {
       ],
       { cancelable: false }
     );
-  }; // with andorid emulator fails me on "ERROR  TypeError: Cannot read property 'NativeModule' of undefined, js engine: hermes", I had to assume that this works since the similiar codes work with the web version of the app.
- 
-
-  /*  const handleDelete = async () => {
-    console.log("Delete button pressed for review id:", review.id);
-    try {
-      const result = await deleteReview(review.id);
-      console.log("Delete result:", result);
-      if (result && result.deleteReview) {
-        console.log("Review deleted successfully");
-        await refetch();
-      } else {
-        console.log("Delete operation didn't return expected result:", result);
-      }
-    } catch (e) {
-      console.error("Error deleting review:", e);
-    }
-  };*/ //the above code is the original code for the handleDelete function, it is left here because I could not get the andorid emulator to work at all, and this works with the web version of the app.
+  };
+ //Alert from react-native does not work on web.
     return (
       <View style={styles.reviewItem}>
         <View style={styles.reviewHeader}>
