@@ -70,6 +70,7 @@ export class RepositoryListContainer extends React.Component {
     
     render() {
       const {repositories} = this.props;
+      const {onEndReach} = this.props;
       const repoNodes = repositories
       ? repositories.edges.map((edge) => edge.node)
       : [];
@@ -92,6 +93,8 @@ export class RepositoryListContainer extends React.Component {
           />
           </Link>
           }
+          onEndReached={onEndReach}
+          onEndReachedThreshold={0.5}
 
           ListHeaderComponent={this.renderHeader}
       />
@@ -109,6 +112,7 @@ const RepositoryList = () => {
   let orderBy
   let orderDirection
 
+
   switch (order) {
     /*case 'select':
       orderBy = '';
@@ -117,25 +121,38 @@ const RepositoryList = () => {
     case 'latest':
       orderBy = 'CREATED_AT';
       orderDirection = 'DESC';
+
       break;
     case 'highest':
       orderBy = 'RATING_AVERAGE';
-      orderDirection = 'DESC';
+      orderDirection = 'DESC'
+
       break;
     case 'lowest':  
       orderBy = 'RATING_AVERAGE';
       orderDirection = 'ASC';
+
       break;      
 
   }
 
 
-  const {repositories} = useRepositories(orderBy, orderDirection, keyWord);
+  const {repositories, fetchMore, loading} = useRepositories({
+    first: 4,
+    orderBy, 
+    orderDirection, 
+    keyWord});
+  
+    const onEndReach = () => {
+      if (!loading && fetchMore) {
+        fetchMore();
+      }
+    };
 
   return (
     <>
    
-  <RepositoryListContainer repositories={repositories} order={order} setOrder={setOrder} keyWord={keyWord} setSearchKeyWord={setSearchKeyWord}/>
+  <RepositoryListContainer repositories={repositories} onEndReach={onEndReach} order={order} setOrder={setOrder} keyWord={keyWord} setSearchKeyWord={setSearchKeyWord}/>
   </>
   );
 };
