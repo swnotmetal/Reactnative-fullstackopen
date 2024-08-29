@@ -1,25 +1,38 @@
 import { useQuery } from "@apollo/client";
 import { GET_SINGLE_REPO } from "../graphql/queries";
-import { Text } from "react-native";
 
+const useSingleRepo = ({ id, first }) => {
+  const { data, loading, error, fetchMore } = useQuery(GET_SINGLE_REPO, {
+    variables: { id, first },
+    fetchPolicy: 'cache-and-network',
+  });
 
-console.log('GET_SINGLE_REPOSITORY:', GET_SINGLE_REPO);
- const useSingleRepo = (id) => {
-    const { data, loading, error } = useQuery(GET_SINGLE_REPO, {
-        variables: { id },
-        fetchPolicy: 'cache-and-network',
-    });
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repository.reviews.pageInfo.hasNextPage;
 
-    console.log('singlerepoid', id)
-
-    if (loading) return <Text>Loading...</Text>;
-
-    if (error) {
-      console.log('errorre', error);
-      return <Text>Error</Text>;
+    if (!canFetchMore) {
+      console.log('Cannot fetch more: either loading or no more pages');
+      return;
     }
 
-    return { repository: data?.repository, loading };
-}
+    console.log('Fetching more singlerepo. Current count:', data.repository.reviews.edges.length);
+    console.log('End cursor singlerepo:', data.repository.reviews.pageInfo.endCursor);
+
+    fetchMore({
+      variables: {
+        after: data.repository.reviews.pageInfo.endCursor,
+        first,
+        id
+      },
+    });
+  };
+
+  return { 
+    repository: data?.repository, 
+    loading, 
+    fetchMore: handleFetchMore, 
+    error 
+  };
+};
 
 export default useSingleRepo;

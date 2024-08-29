@@ -11,10 +11,13 @@ const useRepositories = ({ first, orderBy, orderDirection, searchKeyword }) => {
     const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage;
 
     if (!canFetchMore) {
+      console.log('Cannot fetch more: either loading or no more pages');
       return;
     }
+    console.log('Fetching more repo. Current count:', data.repositories.edges.length);
+    console.log('End cursor repo:', data.repositories.pageInfo.endCursor);
 
-    console.log('check first', data.repositories.pageInfo.endCursor, first);
+
 
     fetchMore({
       variables: {

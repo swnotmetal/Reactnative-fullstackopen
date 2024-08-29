@@ -138,7 +138,7 @@ const RepositoryList = () => {
 
 
   const {repositories, fetchMore, loading} = useRepositories({
-    first: 4,
+    first: 3,
     orderBy, 
     orderDirection, 
     keyWord});

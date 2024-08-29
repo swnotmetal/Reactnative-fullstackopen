@@ -112,18 +112,39 @@ const ReviewItem = ({ review }) => {
 
 export const SingleRepoPage = () => {
   const { id } = useParams()
-  const { repository } = useSingleRepo(id)
+  const { repository, fetchMore, loading, error } = useSingleRepo({id, first: 4})
   const { reviews } = useReviews(repository?.id)
   
-  const reviewNodes = reviews?.edges.map(edge => edge.node) || []
+  const reviewNodes = reviews?.edges
+  .map(edge => edge.node)
+  .filter((review, index, self) => self.findIndex(r => r.id === review.id) === index) || [];
+
+  // asked AI for help to filter out duplicate ids in the reviewNodes.
+
+  console.log("all IDS should be unique", reviewNodes.map(item => item.id));
+  const onEndReach = () => {
+    if (!loading && fetchMore) {
+      fetchMore()
+    }
+  }
+
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
         data={reviewNodes}
         renderItem={({ item }) => <ReviewItem review={item} />}
-        keyExtractor={({ id }) => id}
+        keyExtractor={(item) => item.id}
         ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+        onEndReached={onEndReach}
+        onEndReachedThreshold={0.5}
       />
     </View>
   )

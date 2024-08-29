@@ -63,11 +63,31 @@ export const AUTHENTICATE = gql`
   }
 `;
 
-export const GET_SINGLE_REPO = gql` 
-  query Repository($id: ID!) {
+export const GET_SINGLE_REPO = gql`
+  query Repository($id: ID!, $first: Int, $after: String) {
     repository(id: $id) {
       ...RepoDetails
       url
+      reviews(first: $first, after: $after) {
+        edges {
+          node {
+            id
+            text
+            rating
+            createdAt
+            user {
+              id
+              username
+            }
+          }
+          cursor
+        }
+        pageInfo {
+          endCursor
+          startCursor
+          hasNextPage
+        }
+      }
     }
   }
   ${REPO_DETAILS}
